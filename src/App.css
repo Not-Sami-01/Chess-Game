@@ -1,38 +1,318 @@
-.App {
+*{
+  margin: 0;
+  padding: 0;
+  /* font-family: Arial, Helvetica, sans-serif; */
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  color: var(--text-color);
+}
+:root{
+  --transition : .5s;
+
+
+  --primary-color: #3572EF; 
+  --secondary-color: #050C9C; 
+  --third-color: #3ABEF9;
+  --forth-color: #A7E6FF; 
+  
+  /* --primary-color: #6256CA; 
+  --secondary-color: #86D293; 
+  --third-color: #C1E2A4;
+  --forth-color: #FDFAD9;  */
+
+
+
+  --background-color: #FFFFFF; /* Clean white background for contrast */
+  --text-color: #333333; /* Dark gray for text for better readability */
+  --muted-color: #F2F2F2; 
+}
+.style-none{
+  list-style-type: none;
+}
+.d-none{
+  display: none !important;
+}
+/* widths and heights */
+.w-screen{
+  width: 100vw;
+}
+.w-full{
+  width: 100%;
+}
+.w-max{
+  width: max-content;
+}
+.w-min{
+  width: min-content;
+}
+.h-screen{
+  height: 100vw;
+}
+.h-full{
+  height: 100%;
+}
+.h-max{
+  height: max-content;
+}
+.h-min{
+  height: min-content;
+}
+/* Background Collors */
+.bg-primary{
+  background-color: var(--primary-color);
+}
+.bg-secondary{
+  background-color: var(--secondary-color);
+}
+.bg-third{
+  background-color: var(--third-color);
+}
+.bg-forth{
+  background-color: var(--forth-color);
+}
+.bg-black{
+  background-color: black;
+}
+.text-center{
   text-align: center;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.text-muted {
+  color: var(--muted-color);
+}
+/* Text colors */
+.text-primary{
+  color: var(--primary-color);
+}
+.text-secondary{
+  color: var(--secondary-color);
+}
+.text-third{
+  color: var(--third-color);
+}
+.text-forth{
+  color: var(--third-color);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.flex {
   display: flex;
-  flex-direction: column;
+}
+.items-center{
   align-items: center;
+}
+.justify-center{
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+.justify-between{
+  justify-content: space-between;
+}
+.justify-center{
+  justify-content: center;
+}
+/* Margin */
+.mx-1{
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.mx-2{
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.mx-3{
+  margin-left: 15px;
+  margin-right: 15px;
+}
+.mx-4{
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.my-1{
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.my2{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.my-3{
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+.my-4{
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+/* --------------------------- */
+/* Padding */
+.px-1{
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.px-2{
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.px-3{
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.px-4{
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.py-1{
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.py-2{
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.py-3{
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+.py-4{
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+/* ------------------- */
+/* Main CSS */
+body{
+  background-color: var(--background-color);
+}
+header{
+  border-bottom: 1px solid darkgray;
+  background-color: transparent;
+  padding: 0 10px;
+}
+.navbar{
+  justify-content: flex-start;
+  align-items: center;
+  padding: 5px 0;
+  list-style-type: none;
+}
+.navbar li{
+  margin-right: 20px;
+  padding: 5px;
+  cursor: pointer;
+  border: 1px solid var(--secondary-color);
+  color: var(--primary-color);
+  background-color: transparent;
+  transition: all var(--transition);
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+  user-select: none;
+}
+.navbar span{
+  background-color: var(--secondary-color);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  transition: var(--transition) all;
+  border-bottom-right-radius: 100%;
+  z-index: -1;
+}
+.navbar li:hover span{
+  width: 150%;
+  height: 200%;
+}
+.navbar li:hover {
+  border-radius: 10px;
+  /* color: var(--third-color); */
   color: white;
 }
-
-.App-link {
-  color: #61dafb;
+.navbar h1{
+  margin: 0;
+  padding: 0;
+  font-size: 24px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* ChessBoard */
+.chessboard-container{
+  max-width: fit-content;
+  margin: auto;
+  max-height: fit-content;
 }
+.chessboard{
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  gap: 10px;
+  width: max-content;
+  max-height: 440px;
+  padding: 10px;
+  margin: auto;
+  border: 1px solid darkgray;
+  transition: all .3s;
+}
+.inverse {
+  transform: rotate(180deg);
+  transition: all .3s;
+}
+.inverse svg{
+  transform: rotate(180deg);
+}
+.cell{
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid black;
+  height: 50px;
+  margin: 2px;
+  width: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  font-size: xx-large;
+}
+.light-cell{
+  background: var(--secondary-color);
+}
+.dark-cell{
+  background: var(--third-color);
+}
+.cell:hover{
+  background-color: var(--forth-color);
+}
+.moveable-cell{
+  display: block;
+  border: 1px solid yellow;
+  width: 80%;
+  height: 80%;
+  position: absolute;
+  z-index: 1;
+}
+.dark-dead-pieces{
+  max-width: fit-content;
+  margin-left: auto;
+  height: 25px;
+  font-size: larger;
+  background-color: wheat;
+  border: 1px solid black;
+  display: flex;
+  min-width: 100px;
+}
+.light-dead-pieces{
+  max-width: fit-content;
+  min-width: 100px;
+  background-color: black;
+  height: 25px;
+  margin-left: auto;
+  font-size: larger;
+  display: flex;
+}
+.light span, .dark span{
+  display: flex;
+  max-width: fit-content;
+  max-height: fit-content;
+}
+.light *{
+  color: white;
+}
+.dark *{
+  color: black;
+}
+
+/* --------------------- */
