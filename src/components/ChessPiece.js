@@ -389,25 +389,25 @@ function getAllLShapeMoves(chessBoard, piece) {
   // Check upper-left L
   tempRow = row - 1;
   tempCol = col - 2;
-  if (tempRow >= 0 && tempCol >= 0 && (chessBoard[tempRow][tempCol] === null || !chessBoard[tempRow, tempCol].theme !== piece.theme)) {
+  if (tempRow >= 0 && tempCol >= 0 && (chessBoard[tempRow][tempCol] === null || !chessBoard[tempRow][tempCol].theme !== piece.theme)) {
     pieceMoves.push([tempRow, tempCol]);
   }
   // Check upper-right L
   tempRow = row + 1;
   tempCol = col - 2;
-  if (tempRow < 8 && tempCol >= 0 && (chessBoard[tempRow][tempCol] === null || !chessBoard[tempRow, tempCol].theme !== piece.theme)) {
+  if (tempRow < 8 && tempCol >= 0 && (chessBoard[tempRow][tempCol] === null || !chessBoard[tempRow][tempCol].theme !== piece.theme)) {
     pieceMoves.push([tempRow, tempCol]);
   }
   // Check bottom-left L
   tempRow = row - 1;
   tempCol = col + 2;
-  if (tempRow >= 0 && tempCol < 8 && (chessBoard[tempRow][tempCol] === null || !chessBoard[tempRow, tempCol].theme !== piece.theme)) {
+  if (tempRow >= 0 && tempCol < 8 && (chessBoard[tempRow][tempCol] === null || !chessBoard[tempRow][tempCol].theme !== piece.theme)) {
     pieceMoves.push([tempRow, tempCol]);
   }
   // Check bottom-left L
   tempRow = row + 1;
   tempCol = col + 2;
-  if (tempRow < 8 && tempCol < 8 && (chessBoard[tempRow][tempCol] === null || !chessBoard[tempRow, tempCol].theme !== piece.theme)) {
+  if (tempRow < 8 && tempCol < 8 && (chessBoard[tempRow][tempCol] === null || !chessBoard[tempRow][tempCol].theme !== piece.theme)) {
     pieceMoves.push([tempRow, tempCol]);
   }
 
@@ -415,25 +415,25 @@ function getAllLShapeMoves(chessBoard, piece) {
   // Check upper-left L
   tempRow = row - 2;
   tempCol = col - 1;
-  if (tempRow >= 0 && tempCol >= 0 && (chessBoard[tempRow][tempCol] === null || !chessBoard[tempRow, tempCol].theme !== piece.theme)) {
+  if (tempRow >= 0 && tempCol >= 0 && (chessBoard[tempRow][tempCol] === null || !chessBoard[tempRow][tempCol].theme !== piece.theme)) {
     pieceMoves.push([tempRow, tempCol]);
   }
   // Check upper-right L
   tempRow = row - 2;
   tempCol = col + 1;
-  if (tempRow >= 0 && tempCol < 8 && (chessBoard[tempRow][tempCol] === null || !chessBoard[tempRow, tempCol].theme !== piece.theme)) {
+  if (tempRow >= 0 && tempCol < 8 && (chessBoard[tempRow][tempCol] === null || !chessBoard[tempRow][tempCol].theme !== piece.theme)) {
     pieceMoves.push([tempRow, tempCol]);
   }
   // Check bottom-left L
   tempRow = row + 2;
   tempCol = col - 1;
-  if (tempRow < 8 && tempCol >= 0 && (chessBoard[tempRow][tempCol] === null || !chessBoard[tempRow, tempCol].theme !== piece.theme)) {
+  if (tempRow < 8 && tempCol >= 0 && (chessBoard[tempRow][tempCol] === null || !chessBoard[tempRow][tempCol].theme !== piece.theme)) {
     pieceMoves.push([tempRow, tempCol]);
   }
   // Check bottom-left L
   tempRow = row + 2;
   tempCol = col + 1;
-  if (tempRow < 8 && tempCol < 8 && (chessBoard[tempRow][tempCol] === null || !chessBoard[tempRow, tempCol].theme !== piece.theme)) {
+  if (tempRow < 8 && tempCol < 8 && (chessBoard[tempRow][tempCol] === null || !chessBoard[tempRow][tempCol].theme !== piece.theme)) {
     pieceMoves.push([tempRow, tempCol]);
   }
   return pieceMoves;
