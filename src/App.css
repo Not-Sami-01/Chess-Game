@@ -223,10 +223,33 @@ header{
   /* color: var(--third-color); */
   color: white;
 }
+.nav-link-full-color{
+  color: white !important;
+  
+}
+.nav-link-full-color span{
+  transition: all var(--transition);
+  background-color: var(--secondary-color);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 150%;
+  height: 200%;
+  transition: var(--transition) all;
+  border-bottom-right-radius: 100%;
+  z-index: -1;
+}
 .navbar h1{
   margin: 0;
   padding: 0;
   font-size: 24px;
+}
+.nav-text:hover{
+  transform: all 0.3s;
+  padding: 0;
+  font-size: 24px;
+  margin-bottom: 4px;
+  cursor: pointer;
 }
 
 /* ChessBoard */
@@ -284,6 +307,12 @@ header{
   position: absolute;
   z-index: 1;
 }
+.dead-container{
+  max-width: fit-content;
+  margin-left: auto;
+  display: flex;
+  align-items: end;
+}
 .dark-dead-pieces{
   max-width: fit-content;
   margin-left: auto;
@@ -297,7 +326,8 @@ header{
 .light-dead-pieces{
   max-width: fit-content;
   min-width: 100px;
-  background-color: black;
+  background-color: gray;
+  border: 1px solid black;
   height: 25px;
   margin-left: auto;
   font-size: larger;
@@ -313,6 +343,9 @@ header{
 }
 .dark *{
   color: black;
+}
+.terror{
+  background-color: red !important;
 }
 
 /* --------------------- */

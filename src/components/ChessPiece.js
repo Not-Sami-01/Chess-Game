@@ -17,20 +17,23 @@ export const getMoves = (chessBoard, piece) => {
     case 'pawn':
       return getPawnMoves(chessBoard, piece);
     default:
-      return -1;
+      return [];
   }
 }
 
 export const checkContains = (moves, pos) => {
+  let val = false;
   for (let i in moves) {
     if (moves[i][0] === pos[0] && moves[i][1] === pos[1]) {
-      return true;
+      val = true;
+      break;
     }
   }
+  return val;
 }
 export const refreshAllMoves = (chessBoard) => {
-  for (let i in chessBoard) {
-    for (let j in chessBoard[i]) {
+  for (const i in chessBoard) {
+    for (const j in chessBoard[i]) {
       if (chessBoard[i][j] === null) {
         break;
       } else {
@@ -144,6 +147,7 @@ export function setUpChessBoard(chessBoard, callBack) {
       moves: [],
       component: <FaChessKing className="dark" />,
       theme: 'dark',
+      terror: false,
     },
     // Light King
     {
@@ -153,6 +157,7 @@ export function setUpChessBoard(chessBoard, callBack) {
       moves: [],
       component: <FaChessKing className="light" />,
       theme: 'light',
+      terror: false,
     },
     // Dark Knights
     {
@@ -222,7 +227,10 @@ export function setUpChessBoard(chessBoard, callBack) {
     piece.moves = getMoves(chessBoard, piece);
     chessBoard[piece.xPos][piece.yPos] = piece;
   }
+  const darkKing = chessBoard[4][0];
+  const lightKing = chessBoard[4][7];
   callBack([...chessBoard]);
+  return { darkKing, lightKing };
 }
 
 
@@ -237,7 +245,7 @@ const getAllStraightMoves = (chessBoard, piece) => {
       pieceMoves.push([row, col]);
     } else {
       if (chessBoard[row][col].theme !== piece.theme) {
-        pieceMoves.push([row, col]);
+        pieceMoves.push([row, col]);n
       }
       break;
     }
@@ -346,36 +354,53 @@ function getBoxMoves(chessBoard, piece) {
   let pieceMoves = [];
   // Check upward
   if (col !== 7 && (chessBoard[row][col + 1] === null || chessBoard[row][col + 1].theme !== piece.theme)) {
-    pieceMoves.push([row, col + 1]);
+    if (!checkTerrorOnPos(chessBoard, [row, col + 1], piece)) {
+      pieceMoves.push([row, col + 1]);
+    }
   }
   // Check downwards
   if (col !== 0 && (chessBoard[row][col - 1] === null || chessBoard[row][col - 1].theme !== piece.theme)) {
-    pieceMoves.push([row, col - 1]);
+    if (!checkTerrorOnPos(chessBoard, [row, col - 1], piece)) {
+      pieceMoves.push([row, col - 1]);
+    }
   }
   // Check left
   if (row !== 0 && (chessBoard[row - 1][col] === null || chessBoard[row - 1][col].theme !== piece.theme)) {
-    pieceMoves.push([row - 1, col]);
+    if (!checkTerrorOnPos(chessBoard, [row - 1, col], piece)) {
+      pieceMoves.push([row - 1, col]);
+    }
   }
   // Check right
   if (row !== 7 && (chessBoard[row + 1][col] === null || chessBoard[row + 1][col].theme !== piece.theme)) {
-    pieceMoves.push([row + 1, col]);
+    if (!checkTerrorOnPos(chessBoard, [row + 1, col], piece)) {
+      pieceMoves.push([row + 1, col]);
+    }
   }
   // Check upper-right
   if (row !== 7 && col !== 7 && (chessBoard[row + 1][col + 1] === null || chessBoard[row + 1][col + 1].theme !== piece.theme)) {
-    pieceMoves.push([row + 1, col + 1]);
+    if (!checkTerrorOnPos(chessBoard, [row + 1, col + 1], piece)) {
+      pieceMoves.push([row + 1, col + 1]);
+    }
   }
   // Check upper-left
   if (row !== 0 && col !== 7 && (chessBoard[row - 1][col + 1] === null || chessBoard[row - 1][col + 1].theme !== piece.theme)) {
-    pieceMoves.push([row - 1, col + 1]);
+    if (!checkTerrorOnPos(chessBoard, [row - 1, col + 1], piece)) {
+      pieceMoves.push([row - 1, col + 1]);
+    }
   }
   // Check bottom-left
   if (row !== 7 && col !== 0 && (chessBoard[row + 1][col - 1] === null || chessBoard[row + 1][col - 1].theme !== piece.theme)) {
-    pieceMoves.push([row + 1, col - 1]);
+    if (!checkTerrorOnPos(chessBoard, [row + 1, col - 1], piece)) {
+      pieceMoves.push([row + 1, col - 1]);
+    }
   }
   // Check bottom-right
   if (row !== 0 && col !== 0 && (chessBoard[row - 1][col - 1] === null || chessBoard[row - 1][col - 1].theme !== piece.theme)) {
-    pieceMoves.push([row - 1, col - 1]);
+    if (!checkTerrorOnPos(chessBoard, [row - 1, col - 1], piece)) {
+      pieceMoves.push([row - 1, col - 1]);
+    }
   }
+
   return pieceMoves;
 }
 function getAllLShapeMoves(chessBoard, piece) {
@@ -451,19 +476,21 @@ const getPawnMoves = (chessBoard, piece) => {
         pieceMoves.push([row, col - 2]);
       }
     }
+    // Light Killing Moves
     if (col - 1 >= 0 && row + 1 < 8 && chessBoard[row + 1][col - 1] !== null && chessBoard[row + 1][col - 1]?.theme !== piece.theme) {
       pieceMoves.push([row + 1, col - 1]);
     }
     if (col - 1 >= 0 && row - 1 >= 0 && chessBoard[row - 1][col - 1] !== null && chessBoard[row - 1][col - 1]?.theme !== piece.theme) {
-      pieceMoves.push([row + 1, col - 1]);
+      pieceMoves.push([row - 1, col - 1]);
     }
   } else {
     if (col + 1 >= 0 && chessBoard[row][col + 1] === null) {
       pieceMoves.push([row, col + 1]);
-      if (col + 2 >= 0  &&chessBoard[row][col + 2] === null && chessBoard[row][col]?.firstMove === false) {
+      if (col + 2 >= 0 && chessBoard[row][col + 2] === null && chessBoard[row][col]?.firstMove === false) {
         pieceMoves.push([row, col + 2]);
       }
     }
+    // Dark Killing Moves
     if (col + 1 < 8 && row + 1 < 8 && chessBoard[row + 1][col + 1] !== null && chessBoard[row + 1][col + 1]?.theme !== piece.theme) {
       pieceMoves.push([row + 1, col + 1]);
     }
@@ -473,7 +500,124 @@ const getPawnMoves = (chessBoard, piece) => {
   }
   return pieceMoves;
 }
-export function checkKingMoves(chessBoard, theme) {
-  const king = chessBoard.flatMap(row => row).find(col => col?.name === 'king' && col?.theme == theme);
-  const moves = getBoxMoves(chessBoard, king);
+
+// Sound Effects
+export const clickSoundPlay = (type = false) => {
+  if (true) {
+    const audio = new Audio('/sounds/true-click-trimmed.wav');
+    audio.play();
+  }
 }
+export const pieceMoveSound = () => {
+  const audio = new Audio('/sounds/piece-dies-trimmed-audio.mp3');
+  audio.play();
+}
+export const pieceDieSound = () => {
+  const audio = new Audio('/sounds/piece-move-audio.mp3');
+  audio.play();
+}
+export const checkmateSound = () => {
+  const audio = new Audio('/sounds/checkmate-audio.mp3');
+  audio.play();
+}
+export const checkSound = () => {
+  const audio = new Audio('/sounds/check-audio.mp3');
+  audio.play();
+}
+export const playSound = (type) => {
+  switch (type) {
+    case 1:
+      pieceMoveSound();
+      break;
+    case 2:
+      pieceDieSound();
+      break;
+    case 3:
+      checkSound();
+      break;
+    case 4:
+      checkmateSound();
+      break;
+    default:
+      break;
+  }
+  return;
+}
+
+const checkTerrorOnPos = (chessBoard, pos, king) => {
+  for (const row of chessBoard) {
+    for (const piece of row) {
+      if (piece !== null && piece.theme !== king.theme) {
+        const moves = piece.moves;
+        if (piece.name === 'pawn') {
+
+          // Terror by Dark Pawns
+          if (piece.theme === 'dark' && king.theme === 'light') {
+            const pawnMoves = [[piece.xPos + 1, piece.yPos + 1], [piece.xPos - 1, piece.yPos + 1]]
+            if (checkContains(pawnMoves, pos)) {
+              return true;
+            }
+          }
+          // Terror by Light Pawns
+          else if (piece.theme === 'light' && king.theme === 'dark') {
+            const pawnMoves = [[piece.xPos + 1, piece.yPos - 1], [piece.xPos - 1, piece.yPos - 1]]
+            if (checkContains(pawnMoves, pos)) {
+              return true;
+            }
+          }
+        } else if (checkContains(moves, pos)) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+const checkTerror = (king, chessBoard) => {
+  for (let i = 0; i < chessBoard.length; i++) {
+    for (let j = 0; j < chessBoard[i].length; j++) {
+      if (chessBoard[i][j] !== null && chessBoard[i][j].theme !== king.theme) {
+        const moves = chessBoard[i][j].moves;
+        // console.log(checkContains(moves, [king.xPos, king.yPos]))
+        if (checkContains(moves, [king.xPos, king.yPos]))
+          return true;
+      }
+    }
+  }
+  return false;
+}
+export function checkKingTerrorAndSelectMoves(chessBoard, kings, setKings, pieceSound, setLightTerror, setDarkTerror) {
+  chessBoard = refreshAllMoves(chessBoard);
+  let king = kings.lightKing;
+  if (checkTerror(king, chessBoard)) {
+    setLightTerror(`${king.xPos}-${king.yPos}`);
+    pieceSound = 3;
+    // setKingMoves
+  } else {
+    // console.log('No Terror')
+    setLightTerror(null)
+  }
+  king = kings.darkKing;
+  if (checkTerror(king, chessBoard)) {
+    setDarkTerror(`${king.xPos}-${king.yPos}`);
+    pieceSound = 3;
+    // setKingMoves
+  } else {
+    // console.log('No Terror')
+    setDarkTerror(null)
+  }
+  playSound(pieceSound);
+}
+
+// 1- Check King terror ----> Done
+// 2- Check King moves restrictions ----> Done
+// 3- Calculate King moves ----> Done
+// 4- Calculate Defense of king by moves ----> Done
+
+// 5- Game Draw calculations ----> Pending...
+// 6- Castling ----> Pending...
+// 7- En Passe ----> Pending...
+// 8- Promotion of Pawn ----> Pending...
+// 9- Calculate Defense of king by other pieces ----> Pending...
+// 10- If moves are zero and there are no other options then checkmate ----> Pending...
