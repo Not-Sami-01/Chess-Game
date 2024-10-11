@@ -1,6 +1,6 @@
 # My Chess Game Project (Still Working on It - Incomplete)
 
-This project is a personal endeavor aimed at enhancing my problem-solving skills and deepening my understanding of game development. The chess game implements the classic rules of chess and allows for single-player and multiplayer modes.
+This project is a personal endeavor aimed at enhancing my problem-solving skills and deepening my understanding of game development. The chess game implements the classic rules of chess.
 
 ## Available Scripts
 
@@ -50,7 +50,6 @@ To learn React, check out the [React documentation](https://reactjs.org/docs/get
 
 ### Future Improvements
 
-- Implement AI for single-player mode.
 - Enhance the user interface for better usability.
 - Add online multiplayer functionality.
 
