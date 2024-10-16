@@ -1,24 +1,38 @@
 import { FaChessBishop, FaChessKing, FaChessKnight, FaChessPawn, FaChessQueen, FaChessRook } from "react-icons/fa";
-export const getMoves = (chessBoard, piece) => {
+export const getMoves = (chessBoard, piece, setChessBoard) => {
+  let movesToSet = [];
   switch (piece.name) {
     // Moves for Rook
     case 'rook':
-      return getAllStraightMoves(chessBoard, piece);
+      movesToSet = getAllStraightMoves(chessBoard, piece);
+      break;
 
     // Moves for Bishop
     case 'bishop':
-      return getAllDiagonalMoves(chessBoard, piece);
+      movesToSet = getAllDiagonalMoves(chessBoard, piece);
+      break;
+
+    // Moves for Queen
     case 'queen':
-      return [...getAllStraightMoves(chessBoard, piece), ...getAllDiagonalMoves(chessBoard, piece)];
+      movesToSet = [...getAllStraightMoves(chessBoard, piece), ...getAllDiagonalMoves(chessBoard, piece)];
+      break;
+
+    // Moves for King
     case 'king':
-      return getBoxMoves(chessBoard, piece);
+      movesToSet = getBoxMoves(chessBoard, piece);
+      break;
+
+    // Moves for Knight
     case 'knight':
-      return getAllLShapeMoves(chessBoard, piece);
+      movesToSet = getAllLShapeMoves(chessBoard, piece);
+      break;
+
+    // Moves for Pawn
     case 'pawn':
-      return getPawnMoves(chessBoard, piece);
-    default:
-      return [];
+      movesToSet = getPawnMoves(chessBoard, piece);
+      break;
   }
+  return movesToSet;
 }
 
 export const checkContains = (moves, pos) => {
@@ -35,9 +49,11 @@ export const refreshAllMoves = (chessBoard) => {
   for (const i in chessBoard) {
     for (const j in chessBoard[i]) {
       if (chessBoard[i][j] === null) {
-        break;
+        continue;
       } else {
-        chessBoard[i][j].moves = getMoves(chessBoard, chessBoard[i][j]);
+        const piece = chessBoard[i][j]
+        // console.log(piece.theme, piece.name);
+        chessBoard[i][j].moves = getMoves(chessBoard, piece);
       }
     }
   }
@@ -53,7 +69,8 @@ export function setUpChessBoard(chessBoard, callBack) {
       yPos: 0,
       moves: [],
       component: <FaChessRook className="dark" />,
-      theme: 'dark'
+      theme: 'dark',
+      totalMoves: [],
     },
     {
       // Right Rook
@@ -63,6 +80,8 @@ export function setUpChessBoard(chessBoard, callBack) {
       moves: [],
       component: <FaChessRook className="dark" />,
       theme: 'dark',
+      totalMoves: [],
+
     },
     // Light Rooks
     {
@@ -73,6 +92,8 @@ export function setUpChessBoard(chessBoard, callBack) {
       moves: [],
       component: <FaChessRook className="light" />,
       theme: 'light',
+      totalMoves: [],
+
     },
     {
       // Right Rook
@@ -82,6 +103,7 @@ export function setUpChessBoard(chessBoard, callBack) {
       moves: [],
       component: <FaChessRook className="light" />,
       theme: 'light',
+      totalMoves: [],
     },
     // Dark Bishops
     {
@@ -92,6 +114,7 @@ export function setUpChessBoard(chessBoard, callBack) {
       moves: [],
       component: <FaChessBishop className="dark" />,
       theme: 'dark',
+      totalMoves: []
     },
     {
       // Right Bishop
@@ -101,6 +124,7 @@ export function setUpChessBoard(chessBoard, callBack) {
       moves: [],
       component: <FaChessBishop className="dark" />,
       theme: 'dark',
+      totalMoves: []
     },
     // Light Bishops
     {
@@ -111,6 +135,7 @@ export function setUpChessBoard(chessBoard, callBack) {
       moves: [],
       component: <FaChessBishop className="light" />,
       theme: 'light',
+      totalMoves: []
     },
     {
       // Right Bishop
@@ -120,6 +145,7 @@ export function setUpChessBoard(chessBoard, callBack) {
       moves: [],
       component: <FaChessBishop className="light" />,
       theme: 'light',
+      totalMoves: []
     },
     // Dark Queen
     {
@@ -129,6 +155,7 @@ export function setUpChessBoard(chessBoard, callBack) {
       moves: [],
       component: <FaChessQueen className="dark" />,
       theme: 'dark',
+      totalMoves: []
     },
     // Light Queen
     {
@@ -138,6 +165,7 @@ export function setUpChessBoard(chessBoard, callBack) {
       moves: [],
       component: <FaChessQueen className="light" />,
       theme: 'light',
+      totalMoves: []
     },
     // Dark King
     {
@@ -224,12 +252,12 @@ export function setUpChessBoard(chessBoard, callBack) {
     );
   }
   for (let piece of pieces) {
-    piece.moves = getMoves(chessBoard, piece);
     chessBoard[piece.xPos][piece.yPos] = piece;
   }
   const darkKing = chessBoard[4][0];
   const lightKing = chessBoard[4][7];
-  callBack([...chessBoard]);
+  const chessBoardWithMoves = chessBoard = refreshAllMoves(chessBoard);
+  callBack([...chessBoardWithMoves]);
   return { darkKing, lightKing };
 }
 
@@ -245,7 +273,10 @@ const getAllStraightMoves = (chessBoard, piece) => {
       pieceMoves.push([row, col]);
     } else {
       if (chessBoard[row][col].theme !== piece.theme) {
-        pieceMoves.push([row, col]);n
+        pieceMoves.push([row, col]);
+      }else if(chessBoard[row][col].theme === piece.theme){
+        pieceMoves.push([row, col]);
+        break;
       }
       break;
     }
@@ -259,6 +290,9 @@ const getAllStraightMoves = (chessBoard, piece) => {
     } else {
       if (chessBoard[row][col].theme !== piece.theme) {
         pieceMoves.push([row, col]);
+      }else if(chessBoard[row][col].theme === piece.theme){
+        pieceMoves.push([row, col]);
+        break;
       }
       break;
     }
@@ -272,6 +306,9 @@ const getAllStraightMoves = (chessBoard, piece) => {
     } else {
       if (chessBoard[row][col].theme !== piece.theme) {
         pieceMoves.push([row, col]);
+      }else if(chessBoard[row][col].theme === piece.theme){
+        pieceMoves.push([row, col]);
+        break;
       }
       break;
     }
@@ -285,6 +322,9 @@ const getAllStraightMoves = (chessBoard, piece) => {
     } else {
       if (chessBoard[row][col].theme !== piece.theme) {
         pieceMoves.push([row, col]);
+      }else if(chessBoard[row][col].theme === piece.theme){
+        pieceMoves.push([row, col]);
+        break;
       }
       break;
     }
@@ -304,6 +344,9 @@ function getAllDiagonalMoves(chessBoard, piece) {
     } else {
       if (chessBoard[row][col].theme !== piece.theme) {
         pieceMoves.push([row, col]);
+      }else if(chessBoard[row][col].theme === piece.theme){
+        pieceMoves.push([row, col]);
+        break;
       }
       break;
     }
@@ -316,6 +359,9 @@ function getAllDiagonalMoves(chessBoard, piece) {
     } else {
       if (chessBoard[row][col].theme !== piece.theme) {
         pieceMoves.push([row, col]);
+      }else if(chessBoard[row][col].theme === piece.theme){
+        pieceMoves.push([row, col]);
+        break;
       }
       break;
     }
@@ -328,6 +374,9 @@ function getAllDiagonalMoves(chessBoard, piece) {
     } else {
       if (chessBoard[row][col].theme !== piece.theme) {
         pieceMoves.push([row, col]);
+      }else if(chessBoard[row][col].theme === piece.theme){
+        pieceMoves.push([row, col]);
+        break;
       }
       break;
     }
@@ -340,6 +389,9 @@ function getAllDiagonalMoves(chessBoard, piece) {
     } else {
       if (chessBoard[row][col].theme !== piece.theme) {
         pieceMoves.push([row, col]);
+      }else if(chessBoard[row][col].theme === piece.theme){
+        pieceMoves.push([row, col]);
+        break;
       }
       break;
     }
@@ -579,7 +631,6 @@ const checkTerror = (king, chessBoard) => {
     for (let j = 0; j < chessBoard[i].length; j++) {
       if (chessBoard[i][j] !== null && chessBoard[i][j].theme !== king.theme) {
         const moves = chessBoard[i][j].moves;
-        // console.log(checkContains(moves, [king.xPos, king.yPos]))
         if (checkContains(moves, [king.xPos, king.yPos]))
           return true;
       }
@@ -587,8 +638,9 @@ const checkTerror = (king, chessBoard) => {
   }
   return false;
 }
-export function checkKingTerrorAndSelectMoves(chessBoard, kings, setKings, pieceSound, setLightTerror, setDarkTerror) {
-  chessBoard = refreshAllMoves(chessBoard);
+export function checkKingTerrorAndSelectMoves(chessBoard, setChessBoard, kings, setKings, pieceSound, setLightTerror, setDarkTerror) {
+  chessBoard = refreshAllMoves(chessBoard)
+  setChessBoard(chessBoard);
   let king = kings.lightKing;
   if (checkTerror(king, chessBoard)) {
     setLightTerror(`${king.xPos}-${king.yPos}`);
@@ -609,6 +661,24 @@ export function checkKingTerrorAndSelectMoves(chessBoard, kings, setKings, piece
   }
   playSound(pieceSound);
 }
+export const checkIfSetsTerrorToKing = (pos, givenChessBoard, kings, givenPiece) => {
+  const piece = JSON.parse(JSON.stringify(givenPiece));
+  const chessBoard = JSON.parse(JSON.stringify(givenChessBoard));
+  let answer = false;
+  const givenKing = piece.theme === 'light' ? kings.lightKing : kings.darkKing;
+  const king = JSON.parse(JSON.stringify(givenKing));
+  const moves = getMoves(chessBoard ,piece);
+  if(checkContains(moves, pos)){
+    chessBoard[piece.xPos][piece.yPos] = null;
+    piece.xPos = pos[0];
+    piece.yPos = pos[1];
+    piece.moves = getMoves(chessBoard, piece);
+    chessBoard[pos[0]][pos[1]] = piece;
+    let newChessBoard = refreshAllMoves(chessBoard);
+    answer = checkTerror(king, newChessBoard);
+  }
+  return answer;
+}
 
 // 1- Check King terror ----> Done
 // 2- Check King moves restrictions ----> Done
@@ -621,3 +691,11 @@ export function checkKingTerrorAndSelectMoves(chessBoard, kings, setKings, piece
 // 8- Promotion of Pawn ----> Pending...
 // 9- Calculate Defense of king by other pieces ----> Pending...
 // 10- If moves are zero and there are no other options then checkmate ----> Pending...
+
+
+
+
+// 1 Create an Array of all moves of every piece except pawn
+// 2 Check before moving that piece that it doesn't endanger the King
+// 3 If a king stays in danger then move is disabled
+// 4 If all possible moves == 0 then it is checkMate

@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import ChessBoard from './components/ChessBoard';
 import { clickSoundPlay, setUpChessBoard } from './components/ChessPiece';
-import { FaChessKing } from 'react-icons/fa';
-
+import { FaBars } from 'react-icons/fa';
+import $ from 'jquery';
 function App() {
 
   const [lightDeadPieces, setLightDeadPieces] = useState([]);
@@ -12,6 +12,9 @@ function App() {
   const [turn, setTurn] = useState(true);
   const [inverseAnimation, setInverseAnimation] = useState(false);
   const [rotateBoard, setRotateBoard] = useState(false);
+  const [navbarCollapse, setNavbarCollapse] = useState(false);
+  const [lightTerror, setLightTerror] = useState(null);
+  const [darkTerror, setDarkTerror] = useState(null);
   
   
   const getChessboardArray = () => {
@@ -36,13 +39,19 @@ function App() {
     setKings(kingPieces);
     setLightDeadPieces([]);
     setDarkDeadPieces([]);
+    setLightTerror(null);
+    setDarkTerror(null);
   }
 
 
   const clearChessBoard = () => {
     clickSoundPlay();
     const board = getChessboardArray();
-    setChessBoard(board)
+    setChessBoard(board);
+    setLightDeadPieces([]);
+    setDarkDeadPieces([]);
+    setLightTerror(null);
+    setDarkTerror(null);
   }
   useEffect(()=> {
     if(rotateBoard){
@@ -68,13 +77,23 @@ function App() {
       setChessBoard(tempChessBoard);
     }
   }, [kings.darkKing])
-
+  useEffect(()=> {
+    if (navbarCollapse) {
+      $('#navbar').css('height', '180px');
+  } else {
+      $('#navbar').css('height', '0px');
+  }
+  
+  }, [navbarCollapse])
   return (
     <>
       <header>
         <nav className='flex items-center justify-between'>
           <h1 className='text-primary nav-text'>Chess Game</h1>
-          <ul className='navbar flex'>
+          <span onClick={() => setNavbarCollapse(!navbarCollapse)} className="md-flex nav-menu d-none">
+            <FaBars/>
+          </span>
+          <ul id='navbar' className={`navbar flex`}>
             <li onClick={clickSoundPlay}>Home<span/></li>
             <li onClick={clickSoundPlay}>About<span/></li>
             <li className={rotateBoard ? 'nav-link-full-color' :''} onClick={()=>{setRotateBoard(!rotateBoard); clickSoundPlay(rotateBoard)}}>Rotate Board<span/></li>
@@ -97,36 +116,40 @@ function App() {
       rotateBoard={rotateBoard}
       kings={kings}
       setKings={setKings}
+      lightTerror={lightTerror}
+      setLightTerror={setLightTerror}
+      darkTerror={darkTerror}
+      setDarkTerror={setDarkTerror}
       />
       <footer className='bg-primary px-3 py-4'>
-        <div className="links justify-between flex">
+        <div className="w-max links justify-between flex flex-col">
 
       <ul className="style-none">
-        <h4>Other Links</h4>
-        <li className='text-muted px-1' >Link 1 </li>
-        <li className='text-muted px-1' >Link 2 </li>
-        <li className='text-muted px-1' >Link 3 </li>
-        <li className='text-muted px-1' >Link 4 </li>
+        <h4 className='text-white'>Other Links</h4>
+        <li className='text-black px-2' >Link 1 </li>
+        <li className='text-black px-2' >Link 2 </li>
+        <li className='text-black px-2' >Link 3 </li>
+        <li className='text-black px-2' >Link 4 </li>
       </ul>
       <ul className="style-none">
-        <h4>Other Links</h4>
-        <li className='text-muted px-1' >Link 1 </li>
-        <li className='text-muted px-1' >Link 2 </li>
-        <li className='text-muted px-1' >Link 3 </li>
-        <li className='text-muted px-1' >Link 4 </li>
+        <h4 className='text-white'>Other Links</h4>
+        <li className='text-black px-2' >Link 1 </li>
+        <li className='text-black px-2' >Link 2 </li>
+        <li className='text-black px-2' >Link 3 </li>
+        <li className='text-black px-2' >Link 4 </li>
       </ul>
       <ul className="style-none">
-        <h4>Other Links</h4>
-        <li className='text-muted px-1' >Link 1 </li>
-        <li className='text-muted px-1' >Link 2 </li>
-        <li className='text-muted px-1' >Link 3 </li>
-        <li className='text-muted px-1' >Link 4 </li>
+        <h4 className='text-white'>Other Links</h4>
+        <li className='text-black px-2' >Link 1 </li>
+        <li className='text-black px-2' >Link 2 </li>
+        <li className='text-black px-2' >Link 3 </li>
+        <li className='text-black px-2' >Link 4 </li>
       </ul>
         </div>
-      <div className="other py-3">
-        <p className='text-muted text-center'>&copy; 2021 Chess Game. All rights reserved</p>
-      </div>
       </footer>
+      <div className="other py-3 w-full bg-forth">
+        <p className='text-black text-center'>&copy; 2021 Chess Game. All rights reserved</p>
+      </div>
     </>
   );
 }

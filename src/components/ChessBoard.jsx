@@ -1,47 +1,73 @@
 import React, { useEffect, useState } from 'react'
-import { checkContains, checkKingTerrorAndSelectMoves, getMoves, pieceDieSound, pieceMoveSound, playSound, refreshAllMoves} from './ChessPiece';
-export default function ChessBoard({ chessBoard, setChessBoard, lightDeadPieces, setLightDeadPieces, darkDeadPieces, setDarkDeadPieces, turn, setTurn, inverseAnimation, rotateBoard, kings, setKings }) {
+import { checkContains, checkIfSetsTerrorToKing, checkKingTerrorAndSelectMoves, getMoves } from './ChessPiece';
+export default function ChessBoard({
+  chessBoard,
+  setChessBoard,
+  lightDeadPieces,
+  setLightDeadPieces,
+  darkDeadPieces,
+  setDarkDeadPieces,
+  turn,
+  setTurn,
+  inverseAnimation,
+  rotateBoard,
+  kings,
+  setKings,
+  lightTerror,
+  setLightTerror,
+  darkTerror,
+  setDarkTerror,
+}) {
 
   const [activePiece, setActivePiece] = useState(null);
   const [moves, setMoves] = useState([]);
-  const [lightTerror, setLightTerror] = useState(null);
-  const [darkTerror, setDarkTerror] = useState(null);
+
 
   // const [isAllowed, setIsAllowed] = useState(true);
   const handleChessClick = (piece, row, col) => {
-    setChessBoard(refreshAllMoves(chessBoard))
     if (activePiece) {
       const newPiece = activePiece;
       newPiece.moves = getMoves(chessBoard, newPiece);
       setActivePiece(newPiece);
       setActivePiece(chessBoard[activePiece.xPos][activePiece.yPos]);
-      movePiece(row, col);
+      const pieceSound = movePiece(row, col);
+      checkKingTerrorAndSelectMoves(chessBoard, setChessBoard, kings, setKings, pieceSound, setLightTerror, setDarkTerror);
       setActivePiece(null);
     } else {
       setActivePiece(piece);
     }
   }
   const movePiece = (row, col) => {
+    if (checkIfSetsTerrorToKing([row, col], chessBoard,kings , activePiece)) {
+      setActivePiece(null);
+      return 0;
+    }
     let newPos = [row, col];
     let pieceSound = 0;
     if (checkContains(activePiece.moves, newPos) && ((turn === true && activePiece.theme === 'light') || (turn === false && activePiece.theme === 'dark'))) {
       if (chessBoard[row][col] !== null) {
-        let piece = chessBoard[row][col];
-        if (activePiece.theme === piece.theme) {
+        if (chessBoard[row][col].name !== 'king') {
+          let piece = chessBoard[row][col];
+          if (activePiece.theme === piece.theme) {
+            setActivePiece(null);
+            return;
+          } else {
+            pieceSound = 2;
+            const tempChessBoard = chessBoard;
+            tempChessBoard[piece.xPos][piece.yPos] = null;
+            setChessBoard([...tempChessBoard])
+            if (piece.theme === 'light') {
+              setLightDeadPieces([...lightDeadPieces, piece])
+            } else if (piece.theme === 'dark') {
+              setDarkDeadPieces([...lightDeadPieces, piece]);
+            }
+          }
+        } else {
+          // alert('I am in else')
           setActivePiece(null);
           return;
-        } else {
-          pieceSound = 2;
-          const tempChessBoard = chessBoard;
-          tempChessBoard[piece.xPos][piece.yPos] = null;
-          setChessBoard([...tempChessBoard])
-          if (piece.theme === 'light') {
-            setLightDeadPieces([...lightDeadPieces, piece])
-          } else if (piece.theme === 'dark') {
-            setDarkDeadPieces([...lightDeadPieces, piece]);
-          }
         }
-      }else{
+      } else {
         pieceSound = 1
       }
       let tempChessBoard = chessBoard;
@@ -49,20 +75,19 @@ export default function ChessBoard({ chessBoard, setChessBoard, lightDeadPieces,
       const piece = activePiece;
       piece.xPos = row;
       piece.yPos = col;
-      piece.moves = getMoves(chessBoard, piece)
+      piece.moves = getMoves(chessBoard, piece);
       if (piece.name === 'pawn' && !piece.firstMove) {
         piece.firstMove = true;
       }
       tempChessBoard[row][col] = piece;
-      if(piece.name === 'king'){
-        if(piece.theme === 'light'){
-          setKings({...kings, lightKing: piece});
-        }else{
-          setKings({...kings, darkKing: piece});
+      if (piece.name === 'king') {
+        if (piece.theme === 'light') {
+          setKings({ ...kings, lightKing: piece });
+        } else {
+          setKings({ ...kings, darkKing: piece });
         }
-      }else{
+      } else {
         setChessBoard([...tempChessBoard])
-        setChessBoard(refreshAllMoves(chessBoard));
       }
       setTurn(!turn)
       setActivePiece(null);
@@ -70,18 +95,16 @@ export default function ChessBoard({ chessBoard, setChessBoard, lightDeadPieces,
       pieceSound = 0;
       setActivePiece(null);
     }
-    setChessBoard(refreshAllMoves(chessBoard));
-    checkKingTerrorAndSelectMoves(chessBoard, kings, setKings, pieceSound, setLightTerror, setDarkTerror);
-
-
+    return pieceSound;
   }
+
   useEffect(() => {
     if (activePiece) {
       setMoves(getMoves(chessBoard, activePiece))
     } else {
       setMoves([]);
     }
-  }, [activePiece]);
+  }, [activePiece, chessBoard,]);
   // useEffect(()=>{
   //   if(terror){
   //     document.getElementById(terror).classList.add('terror');
@@ -89,12 +112,18 @@ export default function ChessBoard({ chessBoard, setChessBoard, lightDeadPieces,
   //     // document.getElementById(terror).classList.remove('terror');
   //   }
   // }, [terror])
+  const checkPieceTheme = (pos) => {
+    if (activePiece) {
+      return activePiece.theme !== chessBoard[pos[0]][pos[1]]?.theme;
+    }
+
+  }
   return (
     <div className='h-max py-4'>
       <div className="chessboard-container">
         {/* {activePiece && <div className="piec">Active</div>} */}
         <div className="dead-container">
-          Dead Pieces: 
+          Dead Pieces:
           <div className="dark-dead-pieces">
             {darkDeadPieces.map(piece => <span key={`${piece.xPos + piece.yPos * Math.random()}key`} className='dark'>{piece.component}</span>)}
           </div>
@@ -111,7 +140,7 @@ export default function ChessBoard({ chessBoard, setChessBoard, lightDeadPieces,
                       id={row + '-' + col}
                       className={`cell ${lightTerror === `${row}-${col}` || darkTerror === `${row}-${col}` ? 'terror' : ''} ${(row + col) % 2 !== 0 ? 'light-cell' : 'dark-cell'}`}
                     >
-                      {moves && moves.some(move => move[0] === row && move[1] === col) && <span className="moveable-cell" />}
+                      {moves && moves.some(move => move[0] === row && move[1] === col) && checkPieceTheme([row, col]) && <span className="moveable-cell" />}
                       {chessBoard[row][col]?.component}
                     </div>
                   );
@@ -121,7 +150,7 @@ export default function ChessBoard({ chessBoard, setChessBoard, lightDeadPieces,
           }
         </div>
         <div className="dead-container">
-                Dead Pieces: 
+          Dead Pieces:
           <div className="light-dead-pieces">
             {lightDeadPieces.map(piece => <span className='light' key={`${piece.xPos + piece.yPos * Math.random()}key`}>{piece.component}</span>)}
           </div>
