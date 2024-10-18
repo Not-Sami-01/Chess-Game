@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { checkContains, checkIfSetsTerrorToKing, checkKingTerrorAndSelectMoves, getMoves } from './ChessPiece';
+import { checkContains, checkIfSetsTerrorToKing, checkKingTerrorAndSelectMoves, getMoves} from './ChessPiece';
+import GameOver from './GameOver';
 export default function ChessBoard({
   chessBoard,
   setChessBoard,
@@ -17,6 +18,11 @@ export default function ChessBoard({
   setLightTerror,
   darkTerror,
   setDarkTerror,
+  disableChessboard,
+  setDisableChessboard,
+  gameOverModal,
+  setGameOverModal,
+  resetChessBoard
 }) {
 
   const [activePiece, setActivePiece] = useState(null);
@@ -25,6 +31,9 @@ export default function ChessBoard({
 
   // const [isAllowed, setIsAllowed] = useState(true);
   const handleChessClick = (piece, row, col) => {
+    if(disableChessboard){
+      return;
+    }
     if (activePiece) {
       const newPiece = activePiece;
       newPiece.moves = getMoves(chessBoard, newPiece);
@@ -116,14 +125,12 @@ export default function ChessBoard({
     if (activePiece) {
       return activePiece.theme !== chessBoard[pos[0]][pos[1]]?.theme;
     }
-
   }
+  const cancelModal = () => setGameOverModal(false);
   return (
     <div className='h-max py-4'>
       <div className="chessboard-container">
-        {/* {activePiece && <div className="piec">Active</div>} */}
         <div className="dead-container">
-          Dead Pieces:
           <div className="dark-dead-pieces">
             {darkDeadPieces.map(piece => <span key={`${piece.xPos + piece.yPos * Math.random()}key`} className='dark'>{piece.component}</span>)}
           </div>
@@ -148,9 +155,14 @@ export default function ChessBoard({
               </div>
             ))
           }
+        {gameOverModal && 
+        <GameOver
+        cancelModal={cancelModal}
+        resetChessBoard={resetChessBoard}
+        />}
         </div>
+
         <div className="dead-container">
-          Dead Pieces:
           <div className="light-dead-pieces">
             {lightDeadPieces.map(piece => <span className='light' key={`${piece.xPos + piece.yPos * Math.random()}key`}>{piece.component}</span>)}
           </div>

@@ -274,7 +274,7 @@ const getAllStraightMoves = (chessBoard, piece) => {
     } else {
       if (chessBoard[row][col].theme !== piece.theme) {
         pieceMoves.push([row, col]);
-      }else if(chessBoard[row][col].theme === piece.theme){
+      } else if (chessBoard[row][col].theme === piece.theme) {
         pieceMoves.push([row, col]);
         break;
       }
@@ -290,7 +290,7 @@ const getAllStraightMoves = (chessBoard, piece) => {
     } else {
       if (chessBoard[row][col].theme !== piece.theme) {
         pieceMoves.push([row, col]);
-      }else if(chessBoard[row][col].theme === piece.theme){
+      } else if (chessBoard[row][col].theme === piece.theme) {
         pieceMoves.push([row, col]);
         break;
       }
@@ -306,7 +306,7 @@ const getAllStraightMoves = (chessBoard, piece) => {
     } else {
       if (chessBoard[row][col].theme !== piece.theme) {
         pieceMoves.push([row, col]);
-      }else if(chessBoard[row][col].theme === piece.theme){
+      } else if (chessBoard[row][col].theme === piece.theme) {
         pieceMoves.push([row, col]);
         break;
       }
@@ -322,7 +322,7 @@ const getAllStraightMoves = (chessBoard, piece) => {
     } else {
       if (chessBoard[row][col].theme !== piece.theme) {
         pieceMoves.push([row, col]);
-      }else if(chessBoard[row][col].theme === piece.theme){
+      } else if (chessBoard[row][col].theme === piece.theme) {
         pieceMoves.push([row, col]);
         break;
       }
@@ -344,7 +344,7 @@ function getAllDiagonalMoves(chessBoard, piece) {
     } else {
       if (chessBoard[row][col].theme !== piece.theme) {
         pieceMoves.push([row, col]);
-      }else if(chessBoard[row][col].theme === piece.theme){
+      } else if (chessBoard[row][col].theme === piece.theme) {
         pieceMoves.push([row, col]);
         break;
       }
@@ -359,7 +359,7 @@ function getAllDiagonalMoves(chessBoard, piece) {
     } else {
       if (chessBoard[row][col].theme !== piece.theme) {
         pieceMoves.push([row, col]);
-      }else if(chessBoard[row][col].theme === piece.theme){
+      } else if (chessBoard[row][col].theme === piece.theme) {
         pieceMoves.push([row, col]);
         break;
       }
@@ -374,7 +374,7 @@ function getAllDiagonalMoves(chessBoard, piece) {
     } else {
       if (chessBoard[row][col].theme !== piece.theme) {
         pieceMoves.push([row, col]);
-      }else if(chessBoard[row][col].theme === piece.theme){
+      } else if (chessBoard[row][col].theme === piece.theme) {
         pieceMoves.push([row, col]);
         break;
       }
@@ -389,7 +389,7 @@ function getAllDiagonalMoves(chessBoard, piece) {
     } else {
       if (chessBoard[row][col].theme !== piece.theme) {
         pieceMoves.push([row, col]);
-      }else if(chessBoard[row][col].theme === piece.theme){
+      } else if (chessBoard[row][col].theme === piece.theme) {
         pieceMoves.push([row, col]);
         break;
       }
@@ -666,18 +666,56 @@ export const checkIfSetsTerrorToKing = (pos, givenChessBoard, kings, givenPiece)
   const chessBoard = JSON.parse(JSON.stringify(givenChessBoard));
   let answer = false;
   const givenKing = piece.theme === 'light' ? kings.lightKing : kings.darkKing;
-  const king = JSON.parse(JSON.stringify(givenKing));
-  const moves = getMoves(chessBoard ,piece);
-  if(checkContains(moves, pos)){
+  let king = JSON.parse(JSON.stringify(givenKing));
+  const moves = getMoves(chessBoard, piece);
+  if (checkContains(moves, pos)) {
     chessBoard[piece.xPos][piece.yPos] = null;
     piece.xPos = pos[0];
     piece.yPos = pos[1];
     piece.moves = getMoves(chessBoard, piece);
+    if (piece.name === 'king') {
+      king = piece;
+    }
     chessBoard[pos[0]][pos[1]] = piece;
     let newChessBoard = refreshAllMoves(chessBoard);
     answer = checkTerror(king, newChessBoard);
   }
   return answer;
+}
+const checkEveryMoveTerror = (piece, chessBoard, king) => {
+  const moves = piece.moves;
+  for (const move of moves){
+    let newChessBoard = JSON.parse(JSON.stringify(chessBoard));
+    newChessBoard[piece.xPos][piece.yPos] = null;
+    newChessBoard[move[0]][move[1]] = piece;
+    if(piece.name === 'king'){
+      king = piece
+    }
+    newChessBoard = refreshAllMoves(newChessBoard)
+    if (!checkTerror(king, newChessBoard)) {
+      return false;
+    }
+  }
+  return true;
+}
+export const isCheckMate = (chessBoard, king) => {
+  let checkMate = true;
+  for(let row in chessBoard){
+    for(let col in chessBoard[row]){
+      if(chessBoard[row][col] !== null && chessBoard[row][col].theme === king.theme){
+        const piece = chessBoard[row][col];
+        if(piece && piece.theme === king.theme){
+          if(checkEveryMoveTerror(piece, chessBoard, king)){
+            continue;
+          }else{
+            checkMate = false;
+            break;
+          }
+      }
+      }
+    }
+  }
+  return checkMate;
 }
 
 // 1- Check King terror ----> Done
