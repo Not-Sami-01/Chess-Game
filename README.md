@@ -52,7 +52,3 @@ To learn React, check out the [React documentation](https://reactjs.org/docs/get
 
 - Enhance the user interface for better usability.
 - Add online multiplayer functionality.
-
-<<<<<<< HEAD
-Feel free to contribute or reach out if you have suggestions or feedback!
-=======
