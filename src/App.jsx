@@ -3,7 +3,6 @@ import './App.css';
 import ChessBoard from './components/ChessBoard';
 import { clickSoundPlay, isCheckMate, setUpChessBoard } from './components/ChessPiece';
 import { FaBars } from 'react-icons/fa';
-import $ from 'jquery';
 function App() {
 
   const [lightDeadPieces, setLightDeadPieces] = useState([]);
@@ -15,9 +14,12 @@ function App() {
   const [navbarCollapse, setNavbarCollapse] = useState(false);
   const [lightTerror, setLightTerror] = useState(null);
   const [darkTerror, setDarkTerror] = useState(null);
-  const [disableChessboard, setDisabledChessboard] = useState(false);
-  const [gameOverModal, setGameOverModal] = useState(true);
+  const [disableChessboard, setDisableChessboard] = useState(false);
+  const [gameOverModal, setGameOverModal] = useState(false);
   const [gameOverMessage, setGameOverMessage] = useState('');
+  const [posToMove, setPosToMove] = useState([]);
+  const [prevChessBoards, setPrevChessBoards] = useState({});
+
 
   const ref = useRef();
   const firstLetterUpperCase = (str) => {
@@ -27,10 +29,11 @@ function App() {
   const checkMate = theme => {
     setGameOverModal(true);
     setGameOverMessage(firstLetterUpperCase(theme) + " won by CheckMate");
-    setDisabledChessboard(true);
+    setDisableChessboard(true);
   }
   const gameOver = data => {
-
+    setGameOverMessage(data.message);
+    setGameOverModal(true);
   }
 
   const getChessboardArray = () => {
@@ -48,7 +51,7 @@ function App() {
 
 
   const resetChessBoard = () => {
-    setDisabledChessboard(false);
+    setDisableChessboard(false);
     clickSoundPlay();
     const board = getChessboardArray();
     setTurn(true);
@@ -58,6 +61,9 @@ function App() {
     setDarkDeadPieces([]);
     setLightTerror(null);
     setDarkTerror(null);
+    setPosToMove([]);
+    setGameOverModal(false);
+    setDisableChessboard(false);
   }
 
 
@@ -69,6 +75,7 @@ function App() {
     setDarkDeadPieces([]);
     setLightTerror(null);
     setDarkTerror(null);
+    setPosToMove([]);
   }
   useEffect(() => {
     if (rotateBoard) {
@@ -105,17 +112,12 @@ function App() {
       ref.current.style.height = '0%';
     }
   }, [navbarCollapse])
-
   useEffect(() => {
-    if (lightTerror) {
-      isCheckMate(chessBoard, kings.lightKing) && checkMate('dark');
-    }
+    if (lightTerror && isCheckMate(chessBoard, kings.lightKing)) checkMate('dark');
   }, [lightTerror])
 
   useEffect(() => {
-    if (darkTerror) {
-      isCheckMate(chessBoard, kings.darkKing) && checkMate('light');
-    }
+    if (darkTerror && isCheckMate(chessBoard, kings.darkKing)) checkMate('light');
   }, [darkTerror])
   return (
     <>
@@ -153,10 +155,15 @@ function App() {
         darkTerror={darkTerror}
         setDarkTerror={setDarkTerror}
         disableChessboard={disableChessboard}
-        setDisabledChessboard={setDisabledChessboard}
+        setDisableChessboard={setDisableChessboard}
         gameOverModal={gameOverModal}
         setGameOverModal={setGameOverModal}
         resetChessBoard={resetChessBoard}
+        gameOverMessage={gameOverMessage}
+        setGameOverMessage={setGameOverMessage}
+        gameOver={gameOver}
+        posToMove={posToMove}
+        setPosToMove={setPosToMove}
       />
       <footer className='bg-primary px-3 py-4'>
         <div className="w-max links justify-between flex flex-col">

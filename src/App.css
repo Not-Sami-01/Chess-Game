@@ -350,6 +350,14 @@ header {
   position: absolute;
   z-index: 1;
 }
+.moveable-cell-red {
+  display: block;
+  border: 1px solid red;
+  width: 80%;
+  height: 80%;
+  position: absolute;
+  z-index: 1;
+}
 .dead-container {
   max-width: fit-content;
   margin-left: auto;
@@ -392,27 +400,43 @@ header {
 .terror {
   background-color: red !important;
 }
-
-.change-piece-dropdown {
-  font-size: larger;
+.change-piece-dropdown-light, .change-piece-dropdown-dark {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  /* background-color: var(--forth-color); */
   border: 1px solid black;
-  max-height: fit-content;
-  max-width: fit-content;
-  background-color: black;
+  font-size: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  z-index: 10;
+  transition: opacity 0.3s;
 }
-.change-piece-dropdown li {
-  background-color: lightgoldenrodyellow;
-  text-align: center;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
+.change-piece-dropdown-dark {
+transform: translateY(-100%);
 }
-.change-piece-dropdown li:hover {
-  background-color: darkgoldenrod;
+.change-piece-dropdown-dark li {
+  background-color: var(--forth-color);
+}
+.change-piece-dropdown-light li {
+  background-color: var(--primary-color);
+
+}
+.change-piece-dropdown-dark li, .change-piece-dropdown-light li {
+  border-bottom: 1px solid black;
+  max-height: fit-content;
+  max-width: fit-content;
+}
+.change-piece-dropdown-dark li:hover{
+  background-color: var(--primary-color);
+  
+}
+.change-piece-dropdown-light li:hover {
+  background-color: var(--forth-color);
+}
+.change-piece-dropdown-dark li:last-child, .change-piece-dropdown-light li:last-child {
+  border-bottom: none;
 }
 .game-over-overlay {
   position: absolute;

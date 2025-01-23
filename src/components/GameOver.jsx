@@ -1,7 +1,7 @@
 import React from 'react'
 import { IoClose } from 'react-icons/io5'
 
-const GameOver = ({resetChessBoard, cancelModal}) => {
+const GameOver = ({resetChessBoard, cancelModal, gameOverMessage}) => {
   const restartGame = () => {
     resetChessBoard();
     cancelModal();
@@ -16,7 +16,7 @@ const GameOver = ({resetChessBoard, cancelModal}) => {
           Game Over
         </h1>
         <p className='my-4 text-center'>
-          Light Won by <b>CheckMate</b>
+          {gameOverMessage}
         </p>
         <div className="game-over-footer">
           <button className='game-over-btn' onClick={restartGame}>Restart</button>

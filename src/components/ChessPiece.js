@@ -1,5 +1,5 @@
 import { FaChessBishop, FaChessKing, FaChessKnight, FaChessPawn, FaChessQueen, FaChessRook } from "react-icons/fa";
-export const getMoves = (chessBoard, piece, setChessBoard) => {
+export const getMoves = (chessBoard, piece) => {
   let movesToSet = [];
   switch (piece.name) {
     // Moves for Rook
@@ -31,6 +31,8 @@ export const getMoves = (chessBoard, piece, setChessBoard) => {
     case 'pawn':
       movesToSet = getPawnMoves(chessBoard, piece);
       break;
+    default:
+      break;
   }
   return movesToSet;
 }
@@ -52,7 +54,6 @@ export const refreshAllMoves = (chessBoard) => {
         continue;
       } else {
         const piece = chessBoard[i][j]
-        // console.log(piece.theme, piece.name);
         chessBoard[i][j].moves = getMoves(chessBoard, piece);
       }
     }
@@ -576,7 +577,7 @@ export const checkSound = () => {
   const audio = new Audio('/sounds/check-audio.mp3');
   audio.play();
 }
-export const playSound = (type) => {
+export const playSound = (type, callBack) => {
   switch (type) {
     case 1:
       pieceMoveSound();
@@ -593,6 +594,7 @@ export const playSound = (type) => {
     default:
       break;
   }
+  if(callBack) callBack(0);
   return;
 }
 
@@ -639,27 +641,23 @@ const checkTerror = (king, chessBoard) => {
   return false;
 }
 export function checkKingTerrorAndSelectMoves(chessBoard, setChessBoard, kings, setKings, pieceSound, setLightTerror, setDarkTerror) {
-  chessBoard = refreshAllMoves(chessBoard)
+  chessBoard = refreshAllMoves(chessBoard);
   setChessBoard(chessBoard);
   let king = kings.lightKing;
   if (checkTerror(king, chessBoard)) {
     setLightTerror(`${king.xPos}-${king.yPos}`);
     pieceSound = 3;
-    // setKingMoves
   } else {
-    // console.log('No Terror')
     setLightTerror(null)
   }
   king = kings.darkKing;
   if (checkTerror(king, chessBoard)) {
     setDarkTerror(`${king.xPos}-${king.yPos}`);
     pieceSound = 3;
-    // setKingMoves
   } else {
-    // console.log('No Terror')
     setDarkTerror(null)
   }
-  playSound(pieceSound);
+  if (pieceSound === 3) playSound(pieceSound, (val)=> {});
 }
 export const checkIfSetsTerrorToKing = (pos, givenChessBoard, kings, givenPiece) => {
   const piece = JSON.parse(JSON.stringify(givenPiece));
@@ -682,16 +680,19 @@ export const checkIfSetsTerrorToKing = (pos, givenChessBoard, kings, givenPiece)
   }
   return answer;
 }
-const checkEveryMoveTerror = (piece, chessBoard, king) => {
+const checkEveryMoveTerror = (givenPiece, chessBoard, king) => {
+  let piece = JSON.parse(JSON.stringify(givenPiece));
   const moves = piece.moves;
-  for (const move of moves){
+  for (const move of moves) {
     let newChessBoard = JSON.parse(JSON.stringify(chessBoard));
     newChessBoard[piece.xPos][piece.yPos] = null;
+    piece.xPos = move[0];
+    piece.yPos = move[1];
     newChessBoard[move[0]][move[1]] = piece;
-    if(piece.name === 'king'){
-      king = piece
+    if (piece.name === 'king') {
+      king = piece;
     }
-    newChessBoard = refreshAllMoves(newChessBoard)
+    newChessBoard = refreshAllMoves(newChessBoard);
     if (!checkTerror(king, newChessBoard)) {
       return false;
     }
@@ -700,35 +701,58 @@ const checkEveryMoveTerror = (piece, chessBoard, king) => {
 }
 export const isCheckMate = (chessBoard, king) => {
   let checkMate = true;
-  for(let row in chessBoard){
-    for(let col in chessBoard[row]){
-      if(chessBoard[row][col] !== null && chessBoard[row][col].theme === king.theme){
+  for (let row in chessBoard) {
+    for (let col in chessBoard[row]) {
+      if (chessBoard[row][col] !== null && chessBoard[row][col].theme === king.theme) {
         const piece = chessBoard[row][col];
-        if(piece && piece.theme === king.theme){
-          if(checkEveryMoveTerror(piece, chessBoard, king)){
+        if (piece && piece.theme === king.theme) {
+          if (checkEveryMoveTerror(piece, chessBoard, king)) {
             continue;
-          }else{
+          } else {
             checkMate = false;
             break;
           }
-      }
+        }
       }
     }
   }
   return checkMate;
 }
-
+export const changePiece = (piece, name) => {
+  let newPiece = JSON.parse(JSON.stringify(piece));
+  switch (name) {
+    case 'rook':
+      newPiece.name = 'rook';
+      newPiece.component = <FaChessRook className={piece.theme} />
+      break;
+    case 'knight':
+      newPiece.name = 'knight';
+      newPiece.component = <FaChessKnight className={piece.theme} />
+      break;
+    case 'queen':
+      newPiece.name = 'queen';
+      newPiece.component = <FaChessQueen className={piece.theme} />
+      break;
+    case 'bishop':
+      newPiece.name = 'bishop';
+      newPiece.component = <FaChessBishop className={piece.theme} />
+      break;
+    default:
+      break;
+  }
+  return newPiece;
+}
 // 1- Check King terror ----> Done
 // 2- Check King moves restrictions ----> Done
 // 3- Calculate King moves ----> Done
 // 4- Calculate Defense of king by moves ----> Done
+// 8- Promotion of Pawn ----> Done
+// 9- Calculate Defense of king by other pieces ----> Done
+// 10- If moves are zero and there are no other options then checkmate ----> Done
 
 // 5- Game Draw calculations ----> Pending...
 // 6- Castling ----> Pending...
 // 7- En Passe ----> Pending...
-// 8- Promotion of Pawn ----> Pending...
-// 9- Calculate Defense of king by other pieces ----> Pending...
-// 10- If moves are zero and there are no other options then checkmate ----> Pending...
 
 
 

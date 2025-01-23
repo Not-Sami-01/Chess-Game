@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { checkContains, checkIfSetsTerrorToKing, checkKingTerrorAndSelectMoves, getMoves} from './ChessPiece';
+import { changePiece, checkContains, checkIfSetsTerrorToKing, checkKingTerrorAndSelectMoves, getMoves, playSound, refreshAllMoves } from './ChessPiece';
 import GameOver from './GameOver';
+import ChessSwitchDropDown from './ChessSwitchDropDown';
 export default function ChessBoard({
   chessBoard,
   setChessBoard,
@@ -22,16 +23,36 @@ export default function ChessBoard({
   setDisableChessboard,
   gameOverModal,
   setGameOverModal,
-  resetChessBoard
+  resetChessBoard,
+  gameOverMessage,
+  setGameOverMessage,
+  gameOver,
+  posToMove,
+  setPosToMove,
 }) {
 
   const [activePiece, setActivePiece] = useState(null);
   const [moves, setMoves] = useState([]);
+  let pieceSound = null;
 
-
-  // const [isAllowed, setIsAllowed] = useState(true);
+  const promotePawn = (name) => {
+    if (posToMove && activePiece && activePiece.name === 'pawn') {
+      let tempChessBoard = chessBoard;
+      tempChessBoard[activePiece.xPos][activePiece.yPos] = null;
+      let newPiece = changePiece(activePiece, name);
+      newPiece.xPos = posToMove[0];
+      newPiece.yPos = posToMove[1];
+      tempChessBoard[posToMove[0]][posToMove[1]] = newPiece;
+      setChessBoard(refreshAllMoves(tempChessBoard));
+      setActivePiece(null);
+      setTurn(!turn);
+      setPosToMove([]);
+      setDisableChessboard(false);
+      checkKingTerrorAndSelectMoves(chessBoard, setChessBoard, kings, setKings, pieceSound, setLightTerror, setDarkTerror);
+    }
+  }
   const handleChessClick = (piece, row, col) => {
-    if(disableChessboard){
+    if (disableChessboard) {
       return;
     }
     if (activePiece) {
@@ -40,28 +61,35 @@ export default function ChessBoard({
       setActivePiece(newPiece);
       setActivePiece(chessBoard[activePiece.xPos][activePiece.yPos]);
       const pieceSound = movePiece(row, col);
+      if(pieceSound === -1){
+        return;
+      }
+      setChessBoard(refreshAllMoves(chessBoard));
       checkKingTerrorAndSelectMoves(chessBoard, setChessBoard, kings, setKings, pieceSound, setLightTerror, setDarkTerror);
       setActivePiece(null);
     } else {
       setActivePiece(piece);
     }
   }
+
+  // Move th
   const movePiece = (row, col) => {
-    if (checkIfSetsTerrorToKing([row, col], chessBoard,kings , activePiece)) {
+    if (checkIfSetsTerrorToKing([row, col], chessBoard, kings, activePiece)) {
       setActivePiece(null);
       return 0;
     }
     let newPos = [row, col];
-    let pieceSound = 0;
     if (checkContains(activePiece.moves, newPos) && ((turn === true && activePiece.theme === 'light') || (turn === false && activePiece.theme === 'dark'))) {
       if (chessBoard[row][col] !== null) {
-        if (chessBoard[row][col].name !== 'king') {
-          let piece = chessBoard[row][col];
+        if (chessBoard[row][col].name === 'king') {
+          setActivePiece(null);
+          return 0;
+        } else {
+          const piece = chessBoard[row][col];
           if (activePiece.theme === piece.theme) {
             setActivePiece(null);
             return;
           } else {
-            pieceSound = 2;
             const tempChessBoard = chessBoard;
             tempChessBoard[piece.xPos][piece.yPos] = null;
             setChessBoard([...tempChessBoard])
@@ -71,17 +99,21 @@ export default function ChessBoard({
               setDarkDeadPieces([...lightDeadPieces, piece]);
             }
           }
-        } else {
-          // alert('I am in else')
-          setActivePiece(null);
-          return;
         }
+        pieceSound = 2
       } else {
         pieceSound = 1
       }
+      const piece = activePiece;
+      if (piece.name === 'pawn' && ((piece.theme === 'light' && col === 0) || (piece.theme === 'dark' && col === 7))) {
+        setDisableChessboard(true);
+        setPosToMove([row, col]);
+        return -1;
+      }
+      // setPieceSound(4)
+      playSound(pieceSound, (val) => {pieceSound = val} );
       let tempChessBoard = chessBoard;
       tempChessBoard[activePiece.xPos][activePiece.yPos] = null;
-      const piece = activePiece;
       piece.xPos = row;
       piece.yPos = col;
       piece.moves = getMoves(chessBoard, piece);
@@ -101,10 +133,8 @@ export default function ChessBoard({
       setTurn(!turn)
       setActivePiece(null);
     } else {
-      pieceSound = 0;
       setActivePiece(null);
     }
-    return pieceSound;
   }
 
   useEffect(() => {
@@ -114,13 +144,6 @@ export default function ChessBoard({
       setMoves([]);
     }
   }, [activePiece, chessBoard,]);
-  // useEffect(()=>{
-  //   if(terror){
-  //     document.getElementById(terror).classList.add('terror');
-  //   }else{
-  //     // document.getElementById(terror).classList.remove('terror');
-  //   }
-  // }, [terror])
   const checkPieceTheme = (pos) => {
     if (activePiece) {
       return activePiece.theme !== chessBoard[pos[0]][pos[1]]?.theme;
@@ -147,19 +170,22 @@ export default function ChessBoard({
                       id={row + '-' + col}
                       className={`cell ${lightTerror === `${row}-${col}` || darkTerror === `${row}-${col}` ? 'terror' : ''} ${(row + col) % 2 !== 0 ? 'light-cell' : 'dark-cell'}`}
                     >
-                      {moves && moves.some(move => move[0] === row && move[1] === col) && checkPieceTheme([row, col]) && <span className="moveable-cell" />}
+                      {moves && moves.some(move => move[0] === row && move[1] === col) && checkPieceTheme([row, col]) && <span className={"moveable-cell" + (chessBoard[row][col] === null ? '': '-red')} />}
                       {chessBoard[row][col]?.component}
+                      {posToMove[0] === row && posToMove[1] === col && col === 0 && <ChessSwitchDropDown promotePawn={promotePawn} theme={'light'} />}
+                      {posToMove[0] === row && posToMove[1] === col && col === 7 && <ChessSwitchDropDown promotePawn={promotePawn} theme={'dark'} />}
                     </div>
                   );
                 })}
               </div>
             ))
           }
-        {gameOverModal && 
-        <GameOver
-        cancelModal={cancelModal}
-        resetChessBoard={resetChessBoard}
-        />}
+          {gameOverModal &&
+            <GameOver
+              cancelModal={cancelModal}
+              resetChessBoard={resetChessBoard}
+              gameOverMessage={gameOverMessage}
+            />}
         </div>
 
         <div className="dead-container">

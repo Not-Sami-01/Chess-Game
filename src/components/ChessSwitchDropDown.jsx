@@ -1,14 +1,14 @@
 import React from 'react'
 import { FaChessBishop, FaChessKnight, FaChessQueen, FaChessRook } from 'react-icons/fa'
 
-const ChessSwitchDropDown = ({theme}) => {
-  const themeClass = theme? 'light': 'dark'; 
+const ChessSwitchDropDown = ({theme, promotePawn}) => {
+  const themeClass = theme;
   return (
-    <ul className='style-none change-piece-dropdown'>
-      <li className='px-1 py-1'><FaChessBishop className={themeClass}/></li>
-      <li className='px-1 py-1'><FaChessQueen className={themeClass}/></li>
-      <li className='px-1 py-1'><FaChessKnight className={themeClass}/></li>
-      <li className='px-1 py-1'><FaChessRook className={themeClass}/></li>
+    <ul className={`style-none ${theme === 'light' ?'change-piece-dropdown-light': 'change-piece-dropdown-dark'}`}>
+      <li onClick={()=>promotePawn('bishop')}><FaChessBishop className={themeClass}/></li>
+      <li onClick={()=>promotePawn('queen')}><FaChessQueen className={themeClass}/></li>
+      <li onClick={()=>promotePawn('knight')}><FaChessKnight className={themeClass}/></li>
+      <li onClick={()=>promotePawn('rook')}><FaChessRook className={themeClass}/></li>
     </ul>
   )
 }
