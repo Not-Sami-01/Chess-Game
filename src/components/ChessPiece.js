@@ -578,24 +578,25 @@ export const checkSound = () => {
   audio.play();
 }
 export const playSound = (type, callBack) => {
-  switch (type) {
-    case 1:
-      pieceMoveSound();
-      break;
-    case 2:
-      pieceDieSound();
-      break;
-    case 3:
-      checkSound();
-      break;
-    case 4:
-      checkmateSound();
-      break;
-    default:
-      break;
-  }
-  if(callBack) callBack(0);
   return;
+  // switch (type) {
+  //   case 1:
+  //     pieceMoveSound();
+  //     break;
+  //   case 2:
+  //     pieceDieSound();
+  //     break;
+  //   case 3:
+  //     checkSound();
+  //     break;
+  //   case 4:
+  //     checkmateSound();
+  //     break;
+  //   default:
+  //     break;
+  // }
+  // if(callBack) callBack(0);
+  // return;
 }
 
 const checkTerrorOnPos = (chessBoard, pos, king) => {

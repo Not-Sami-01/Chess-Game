@@ -267,7 +267,7 @@ header {
   color: white;
 }
 .nav-link-full-color * {
-  color: white !important;
+  color: darkblue !important;
 }
 .nav-link-full-color span {
   transition: all var(--transition);
@@ -505,78 +505,135 @@ background-color: lightgreen;
 }
 /* --------------------- */
 
+/* --- HEADER --- */
+.main-header {
+  background-color: var(--primary-color);
+  box-shadow: 0 2px 8px rgba(53, 114, 239, 0.08);
+  border-bottom: none;
+  border-radius: 0 0 12px 12px;
+}
+.main-header h1 {
+  color: #fff;
+  letter-spacing: 1px;
+}
 
+/* --- NAVBAR --- */
+.navbar {
+  background: transparent;
+  gap: 0.5rem;
+}
+.navbar li {
+  background: #fff;
+  color: var(--primary-color);
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(53, 114, 239, 0.07);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  font-weight: 500;
+  font-size: 1rem;
+  margin-right: 0.5rem;
+  padding: 0.3rem 1rem;
+}
+.navbar li:hover, .navbar li:focus {
+  background: var(--third-color);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(53, 114, 239, 0.15);
+}
+.navbar button {
+  color: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+}
 
+/* --- MAIN CONTENT --- */
+.main-content {
+  background: var(--forth-color);
+  min-height: 70vh;
+  padding: 2rem 0;
+}
+.chessboard-container {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(53, 114, 239, 0.10);
+  padding: 2rem 2.5rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
+/* --- FOOTER --- */
+.footer {
+  background: var(--primary-color);
+  color: #fff;
+  padding: 2rem 1rem 1rem 1rem;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -2px 8px rgba(53, 114, 239, 0.08);
+  margin-top: 2rem;
+}
+.credit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.credit span {
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.footer-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  margin: 0 0.25rem;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px rgba(53, 114, 239, 0.10);
+}
+.footer-icon-link:hover, .footer-icon-link:focus {
+  background: var(--third-color);
+  box-shadow: 0 2px 8px rgba(53, 114, 239, 0.18);
+}
+.footer-icon-link svg {
+  color: var(--primary-color);
+  width: 22px;
+  height: 22px;
+}
+.footer p {
+  color: #fff;
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  opacity: 0.85;
+}
 
-/* Responsive styles */
+/* Remove old repeated links/footer blocks */
+.links, .links ul, .links li {
+  display: none !important;
+}
 
-@media (max-width: 768px) {
-  /* Styles for medium devices */
-  .md-block {
-    display: block !important;
+/* --- RESPONSIVE --- */
+@media (max-width: 900px) {
+  .chessboard-container {
+    padding: 1rem 0.5rem;
   }
-  .md-flex {
-    display: flex !important;
-  }
-  .navbar {
+}
+@media (max-width: 600px) {
+  .main-header {
     flex-direction: column;
-    position: absolute;
-    right: 0;
-    top: 9.5%;
-    width: fit-content;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-    z-index: 1;
-    background-color: lightgray;
-    align-items: end;
-    height: fit-content;
-    overflow: hidden;
-    padding: 0;
-    border: none;
+    gap: 1rem;
+    padding: 1rem 0.5rem;
   }
-  .navbar span {
-    display: none;
+  .chessboard-container {
+    padding: 0.5rem 0.2rem;
   }
-  .navbar li {
-    border-bottom: 1px solid black;
-    margin: 1px 0;
-  }
-  .navbar li:hover, .navbar button {
-    color: var(--primary-color) !important;
-  }
-  .navbar li:active, .navbar button{
-    color: var(--secondary-color) !important;
-  }
-  .nav-text:hover {
-    margin-bottom: 0;
-  }
-  .cell {
-    height: 50px;
-    width: 50px;
-    font-size: xx-large;
-  }
-  .collapse {
-    transition: all var(--transition);
-    height: max-content !important;
-  }
-  .navbar li {
-    border: none;
-  }
-  /* Add more styles as needed */
-}
-@media (max-width: 550px) {
-  .cell {
-    height: 40px;
-    width: 40px;
-    font-size: x-large;
-  }
-}
-@media (max-width: 400px) {
-  .cell {
-    height: 8vw;
-    width: 8vw;
-    font-size: larger;
+  .footer {
+    padding: 1rem 0.5rem 0.5rem 0.5rem;
   }
 }
 
