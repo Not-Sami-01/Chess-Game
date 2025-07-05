@@ -1,4 +1,4 @@
-# My Chess Game Project (Still Working on It - Incomplete)
+# My Chess Game Project
 
 This project is a personal endeavor aimed at enhancing my problem-solving skills and deepening my understanding of game development. The chess game implements the classic rules of chess.
 
